@@ -22,7 +22,7 @@ import unittest
 from ebuild_commander.utils import *
 
 
-class TestUtils(unittest.TestCase):
+class TestMakeOpts(unittest.TestCase):
     def test_invalid_makeopts(self):
         self.assertEqual(f'MAKEOPTS="-j16"', set_makeopts_num_jobs(
             '', 16))
