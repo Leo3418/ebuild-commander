@@ -169,14 +169,17 @@ class Commandocker:
             '--security-opt', 'apparmor:unconfined',
             '--device', '/dev/fuse',
             '--workdir', '/root',
-            '--volume', f'{self._portage_config}:'
+            # Docker needs all paths on the host machine to be absolute ones
+            '--volume', f'{self._portage_config.resolve()}:'
                         f'{_CONTAINER_PORTAGE_CONFIG_PATH}:ro',
-            '--volume', f'{self._gentoo_repo}:/var/db/repos/gentoo:ro']
+            '--volume', f'{self._gentoo_repo.resolve()}:'
+                        f'/var/db/repos/gentoo:ro']
 
         custom_repo_info = zip(self._custom_repos, self._custom_repo_names)
         for repo_path, repo_name in custom_repo_info:
             docker_args.append('--volume')
-            docker_args.append(f'{repo_path}:/var/db/repos/{repo_name}:ro')
+            docker_args.append(f'{repo_path.resolve()}:'
+                               f'/var/db/repos/{repo_name}:ro')
 
         if self._storage_opt is not None:
             docker_args.append('--storage-opt')
