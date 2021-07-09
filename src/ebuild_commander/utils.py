@@ -43,7 +43,7 @@ def set_makeopts_num_jobs(line: str, num_jobs: int) -> str:
     makeopts_prefix = 'MAKEOPTS='
     if line.lstrip().startswith(makeopts_prefix):
         # Modify any existing -j/--jobs settings
-        new_makeopts, num_repl = re.subn(r'(-j ?|--jobs=)[0-9]+',
+        new_makeopts, num_repl = re.subn(r'(-j *|--jobs( *|=))[0-9]+',
                                          f'-j{num_jobs}', line)
         if num_repl <= 0:
             # No -j/--jobs settings in MAKEOPTS; append the flag to it
