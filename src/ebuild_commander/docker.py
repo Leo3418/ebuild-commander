@@ -225,14 +225,14 @@ class Commandocker:
                      fatal_on_failure=False)
 
     def _set_makeopts_num_jobs(self) -> bool:
-        try:
-            proc = subprocess.run(
-                ['docker', 'exec', '--interactive',
-                 self._container_name, '/bin/bash', '-c',
-                 f'grep --color=never MAKEOPTS= /etc/portage/make.conf'],
-                check=True, capture_output=True
-            )
-        except subprocess.CalledProcessError:
+        proc = subprocess.run(
+            ['docker', 'exec', '--interactive',
+             self._container_name, '/bin/bash', '-c',
+             f'grep --color=never MAKEOPTS= /etc/portage/make.conf'],
+            capture_output=True
+        )
+        # grep exits with 1 if there were no matches but no errors occurred
+        if proc.returncode != 0 and proc.returncode != 1:
             return False
         orig_makeopts = proc.stdout.decode()
         new_makeopts = ebuild_commander.utils.set_makeopts_num_jobs(
