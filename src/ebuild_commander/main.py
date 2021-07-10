@@ -67,10 +67,7 @@ def main(program_name: str, args) -> None:
                       file=sys.stderr)
                 exit_status = 1
                 continue
-        while True:
-            line = in_stream.readline()
-            if len(line) == 0:
-                break
+        for line in in_stream:
             if not container.execute(line):
                 exit_status = 1
 
