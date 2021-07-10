@@ -103,7 +103,7 @@ class Commandocker:
         args = ['docker', 'exec', '--interactive', self._container_name,
                 '/bin/bash', '-c', cmd]
         try:
-            subprocess.run(args, check=True)
+            subprocess.run(args, check=True, stdin=subprocess.DEVNULL)
             return True
         except subprocess.CalledProcessError as err:
             if fatal_on_failure:
@@ -126,9 +126,9 @@ class Commandocker:
         """
         try:
             subprocess.run(['docker', 'kill', self._container_name],
-                           stdout=subprocess.DEVNULL)
+                           stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
             subprocess.run(['docker', 'rm', self._container_name],
-                           stdout=subprocess.DEVNULL)
+                           stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
             return True
         except subprocess.CalledProcessError as err:
             print(f"{error(self._program_name)}: Command {err.cmd} failed "
@@ -150,7 +150,8 @@ class Commandocker:
 
     def _pull_image(self) -> bool:
         try:
-            subprocess.run(['docker', 'pull', self._docker_image], check=True)
+            subprocess.run(['docker', 'pull', self._docker_image], check=True,
+                           stdin=subprocess.DEVNULL)
             return True
         except subprocess.CalledProcessError as err:
             print(f"{warn(self._program_name)}: Command {err.cmd} failed with "
@@ -187,7 +188,8 @@ class Commandocker:
 
         docker_args.append(self._docker_image)
         try:
-            subprocess.run(docker_args, check=True, stdout=subprocess.DEVNULL)
+            subprocess.run(docker_args, check=True,
+                           stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
             return True
         except subprocess.CalledProcessError as err:
             print(f"{error(self._program_name)}: Command {err.cmd} failed "
@@ -197,7 +199,8 @@ class Commandocker:
     def _start_container(self) -> bool:
         try:
             subprocess.run(['docker', 'start', self._container_name],
-                           check=True, stdout=subprocess.DEVNULL)
+                           check=True,
+                           stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
             return True
         except subprocess.CalledProcessError as err:
             print(f"{error(self._program_name)}: Command {err.cmd} failed "
@@ -229,7 +232,7 @@ class Commandocker:
             ['docker', 'exec', '--interactive',
              self._container_name, '/bin/bash', '-c',
              f'grep --color=never MAKEOPTS= /etc/portage/make.conf'],
-            capture_output=True
+            stdin=subprocess.DEVNULL, capture_output=True
         )
         # grep exits with 1 if there were no matches but no errors occurred
         if proc.returncode != 0 and proc.returncode != 1:
