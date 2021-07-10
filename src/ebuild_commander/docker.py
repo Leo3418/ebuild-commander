@@ -215,11 +215,14 @@ class Commandocker:
         self._set_emerge_opts()
 
     def _copy_portage_config(self) -> None:
-        self.execute(f'rm -r /etc/portage/*', fatal_on_failure=False)
+        self.execute(f'rm -rf /etc/portage/*',
+                     fatal_on_failure=False)
         self.execute(f'cp -r {_CONTAINER_PORTAGE_CONFIG_PATH}/* /etc/portage',
                      fatal_on_failure=False)
-        self.execute(f'rm /etc/portage/make.profile', fatal_on_failure=False)
-        self.execute(f'rm -r /etc/portage/repos.conf', fatal_on_failure=False)
+        self.execute(f'rm -f /etc/portage/make.profile',
+                     fatal_on_failure=False)
+        self.execute(f'rm -rf /etc/portage/repos.conf',
+                     fatal_on_failure=False)
 
     def _set_makeopts_num_jobs(self) -> bool:
         try:
