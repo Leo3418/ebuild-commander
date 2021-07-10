@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+#  ebuild-commander Setup Script for setuptools
+#
 #  Copyright (C) 2021 Yuan Liao
 #
 #  This file is part of ebuild-commander.
