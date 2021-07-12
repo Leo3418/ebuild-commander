@@ -111,8 +111,8 @@ class Commandocker:
             else:
                 program_name = warn(self._program_name)
             print(f"{program_name}: Exit status {err.returncode} encountered "
-                  f"for execution of following command in Docker container "
-                  f"{self._container_name}: \n"
+                  f"for execution of the following command in the Docker "
+                  f"container {self._container_name}: \n"
                   f"\t{cmd}",
                   file=sys.stderr)
             return False
