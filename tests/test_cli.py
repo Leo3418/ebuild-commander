@@ -48,11 +48,22 @@ class TestCli(unittest.TestCase):
     def test_single_custom_repo(self):
         opts = parse_args(['--custom-repo', '/var/db/repos/local'], False)
         self.assertEqual(1, len(opts.custom_repo))
+        opts = parse_args(['--custom-repo', '/var/db/repos/local',
+                           'emerge.sh'], False)
+        self.assertEqual(1, len(opts.custom_repo))
 
     def test_multiple_custom_repos(self):
         opts = parse_args(['--custom-repo', '/var/db/repos/local',
                            '--custom-repo', '/var/db/repos/test'], False)
         self.assertEqual(2, len(opts.custom_repo))
+        opts = parse_args(['--custom-repo', '/var/db/repos/local',
+                           'emerge.sh',
+                           '--custom-repo', '/var/db/repos/test'], False)
+        self.assertEqual(2, len(opts.custom_repo))
+        self.assertEqual(pathlib.Path('/var/db/repos/local'),
+                         opts.custom_repo[0])
+        self.assertEqual(pathlib.Path('/var/db/repos/test'),
+                         opts.custom_repo[1])
 
     def test_emerge_opts(self):
         opts = parse_args(['--emerge-opts', '\'--autounmask y\''])
