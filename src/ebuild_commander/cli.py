@@ -96,7 +96,7 @@ exit status:
         '--emerge-opts',
         metavar='OPTS',
         default='--color y --verbose',
-        help="run emerge with OPTS added to command-line arguments"
+        help="run emerge with OPTS added to command-line arguments\n"
              "(default: %(default)s)"
     )
 
