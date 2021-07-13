@@ -49,7 +49,7 @@ class TestCli(unittest.TestCase):
         opts = parse_args(['--custom-repo', '/var/db/repos/local'], False)
         self.assertEqual(1, len(opts.custom_repo))
 
-    def test_multiple_custom_repo(self):
+    def test_multiple_custom_repos(self):
         opts = parse_args(['--custom-repo', '/var/db/repos/local',
                            '--custom-repo', '/var/db/repos/test'], False)
         self.assertEqual(2, len(opts.custom_repo))
