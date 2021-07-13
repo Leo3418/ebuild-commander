@@ -33,13 +33,16 @@ def main(program_name: str, args) -> None:
     scripts = opts.scripts[0]
     if len(scripts) == 0:
         scripts.append(pathlib.Path('-'))
+    portage_configs = opts.portage_config
+    if portage_configs is None:
+        portage_configs = [pathlib.Path('/etc/portage')]
     custom_repos = opts.custom_repo
     if custom_repos is None:
         custom_repos = []
 
     container = Commandocker(
         program_name,
-        opts.portage_config,
+        portage_configs,
         opts.profile,
         opts.gentoo_repo,
         custom_repos,

@@ -56,10 +56,12 @@ exit status:
         '--portage-config',
         metavar='DIR',
         type=pathlib.Path,
-        default='/etc/portage',
+        action='append',
         help="copy configuration in DIR to container's /etc/portage,\n"
-             "ignoring make.profile and repos.conf\n"
-             "(default: %(default)s)"
+             "ignoring make.profile and repos.conf; can be set\n"
+             "repeatedly to overlay configuration directories on top\n"
+             "of directories specified earlier in the command\n"
+             "(default: /etc/portage if this option is never used)"
     )
     parser.add_argument(
         '--profile',

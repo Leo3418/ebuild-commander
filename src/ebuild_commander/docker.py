@@ -18,6 +18,7 @@
 #  along with ebuild-commander.  If not, see
 #  <https://www.gnu.org/licenses/>.
 
+import math
 import os
 import pathlib
 import subprocess
@@ -28,13 +29,13 @@ import ebuild_commander.utils
 
 from ebuild_commander.out_fmt import warn, error
 
-_CONTAINER_PORTAGE_CONFIG_PATH = '/var/tmp/portage-config'
+_CONTAINER_PORTAGE_CONFIGS_PATH = '/var/tmp/portage-configs'
 
 
 class Commandocker:
     def __init__(self,
                  program_name: str,
-                 portage_config: pathlib.Path,
+                 portage_configs: list[pathlib.Path],
                  profile: str,
                  gentoo_repo: pathlib.Path,
                  custom_repos: list[pathlib.Path],
@@ -44,7 +45,7 @@ class Commandocker:
                  should_pull_image: bool,
                  storage_opt: str):
         self._program_name = program_name
-        self._portage_config = portage_config
+        self._portage_configs = portage_configs
         self._profile = profile
         self._gentoo_repo = gentoo_repo
         self._custom_repos = custom_repos
@@ -171,10 +172,22 @@ class Commandocker:
             '--device', '/dev/fuse',
             '--workdir', '/root',
             # Docker needs all paths on the host machine to be absolute ones
-            '--volume', f'{self._portage_config.resolve()}:'
-                        f'{_CONTAINER_PORTAGE_CONFIG_PATH}:ro',
             '--volume', f'{self._gentoo_repo.resolve()}:'
                         f'/var/db/repos/gentoo:ro']
+
+        # Bind each config directory to a path whose base name is the
+        # directory's index in the array; pad each index with enough digits to
+        # ensure iteration order in Bash shell expansion is desired, or else
+        # the iteration order would be like [0, 10, 1, 2, ...]
+        num_configs = len(self._portage_configs)
+        padding = math.ceil(math.log10(num_configs))
+        for i in range(len(self._portage_configs)):
+            portage_config = self._portage_configs[i]
+            padded_i = f'{i:0{padding}}'
+            docker_args.append('--volume')
+            docker_args.append(f'{portage_config.resolve()}:'
+                               f'{_CONTAINER_PORTAGE_CONFIGS_PATH}/'
+                               f'{padded_i}:ro')
 
         custom_repo_info = zip(self._custom_repos, self._custom_repo_names)
         for repo_path, repo_name in custom_repo_info:
@@ -220,7 +233,8 @@ class Commandocker:
     def _copy_portage_config(self) -> None:
         self.execute(f'rm -rf /etc/portage/*',
                      fatal_on_failure=False)
-        self.execute(f'cp -r {_CONTAINER_PORTAGE_CONFIG_PATH}/* /etc/portage',
+        self.execute(f'for dir in "{_CONTAINER_PORTAGE_CONFIGS_PATH}"/*; do '
+                     f'cp -r "$dir"/* /etc/portage; done',
                      fatal_on_failure=False)
         self.execute(f'rm -f /etc/portage/make.profile',
                      fatal_on_failure=False)

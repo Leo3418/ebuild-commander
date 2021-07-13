@@ -37,6 +37,23 @@ class TestCli(unittest.TestCase):
         opts = parse_args(['setup.sh', 'emerge.sh'], False)
         self.assertEqual(2, len(opts.scripts[0]))
 
+    def test_no_portage_configs(self):
+        opts = parse_args(['emerge.sh'], False)
+        self.assertIsNone(opts.portage_config)
+
+    def test_single_portage_config(self):
+        opts = parse_args(['--portage-config', '/etc/portage'], False)
+        self.assertEqual(1, len(opts.portage_config))
+
+    def test_multiple_portage_configs(self):
+        opts = parse_args(['--portage-config', '/etc/portage',
+                           '--portage-config', '~/.config/portage'], False)
+        self.assertEqual(2, len(opts.portage_config))
+        self.assertEqual(pathlib.Path('/etc/portage'),
+                         opts.portage_config[0])
+        self.assertEqual(pathlib.Path('~/.config/portage'),
+                         opts.portage_config[1])
+
     def test_threads_non_int(self):
         with self.assertRaises(argparse.ArgumentError):
             parse_args(['--threads', 'I'], False)
