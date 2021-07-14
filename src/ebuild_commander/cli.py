@@ -122,8 +122,10 @@ exit status:
 
     parser.add_argument(
         '--skip-cleanup',
-        action='store_true',
-        help="skip container clean-up before exiting"
+        choices=['always', 'on-fail', 'never'],
+        default='on-fail',
+        help="skip container clean-up before exiting\n"
+             "(default: %(default)s)"
     )
 
     parser.add_argument(

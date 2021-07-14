@@ -26,6 +26,8 @@ import ebuild_commander.cli
 from ebuild_commander.docker import Commandocker
 from ebuild_commander.out_fmt import info, error
 
+_EXIT_SIGINT = 130
+
 
 def main(program_name: str, args) -> None:
     opts = ebuild_commander.cli.parse_args(args)
@@ -78,9 +80,12 @@ def main(program_name: str, args) -> None:
                         exit_status = 1
     except KeyboardInterrupt:
         print(f"{error(program_name)}: Exiting on SIGINT")
-        exit_status = 130
+        exit_status = _EXIT_SIGINT
 
-    if not opts.skip_cleanup:
+    should_cleanup = opts.skip_cleanup == 'never' or \
+        (opts.skip_cleanup == 'on-fail' and
+            (exit_status == 0 or exit_status == _EXIT_SIGINT))
+    if should_cleanup:
         print(f"{info(program_name)}: Cleaning up the container...")
         if not container.cleanup():
             exit_status = 3
