@@ -80,7 +80,9 @@ def main(program_name: str, args) -> None:
         print(f"{error(program_name)}: Exiting on SIGINT")
         exit_status = 130
 
-    print(f"{info(program_name)}: Cleaning up the container...")
-    if not container.cleanup():
-        exit_status = 3
+    if not opts.skip_cleanup:
+        print(f"{info(program_name)}: Cleaning up the container...")
+        if not container.cleanup():
+            exit_status = 3
+
     sys.exit(exit_status)

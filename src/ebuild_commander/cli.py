@@ -121,6 +121,12 @@ exit status:
     )
 
     parser.add_argument(
+        '--skip-cleanup',
+        action='store_true',
+        help="skip container clean-up before exiting"
+    )
+
+    parser.add_argument(
         '--help',
         action='help',
         help="display this help and exit"
