@@ -120,15 +120,13 @@ class Commandocker:
 
     def cleanup(self) -> bool:
         """
-        Remove the container.  If the container has already been removed,
+        Remove the container.  If the container cannot be properly removed,
         `False` will be returned.
 
         :return: whether or not the Docker container is successfully removed
         """
         try:
-            subprocess.run(['docker', 'kill', self._container_name],
-                           stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
-            subprocess.run(['docker', 'rm', self._container_name],
+            subprocess.run(['docker', 'rm', '-f', self._container_name],
                            stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
             return True
         except subprocess.CalledProcessError as err:
