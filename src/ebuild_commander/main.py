@@ -51,28 +51,34 @@ def main(program_name: str, args) -> None:
         opts.docker_image,
         opts.pull,
         opts.storage_opt)
-    print(f"{info(program_name)}: Creating Docker container...")
-    if not container.start():
-        sys.exit(3)
 
     exit_status = 0
-    for script in scripts:
-        if script.name == '-':
-            in_stream = sys.stdin
-            print(f"{info(program_name)}: "
-                  f"Reading commands to run from standard input...")
+    try:
+        print(f"{info(program_name)}: Creating Docker container...")
+        if not container.start():
+            exit_status = 3
         else:
-            try:
-                in_stream = open(script)
-                print(f"{info(program_name)}: Running script {script}...")
-            except OSError as err:
-                print(f"{error(program_name)}: {err.filename}: {err.strerror}",
-                      file=sys.stderr)
-                exit_status = 1
-                continue
-        for line in in_stream:
-            if not container.execute(line):
-                exit_status = 1
+            for script in scripts:
+                if script.name == '-':
+                    in_stream = sys.stdin
+                    print(f"{info(program_name)}: "
+                          f"Reading commands to run from standard input...")
+                else:
+                    try:
+                        in_stream = open(script)
+                        print(f"{info(program_name)}: "
+                              f"Running script {script}...")
+                    except OSError as err:
+                        print(f"{error(program_name)}: {err.filename}:"
+                              f"{err.strerror}", file=sys.stderr)
+                        exit_status = 1
+                        continue
+                for line in in_stream:
+                    if not container.execute(line):
+                        exit_status = 1
+    except KeyboardInterrupt:
+        print(f"{error(program_name)}: Exiting on SIGINT")
+        exit_status = 130
 
     print(f"{info(program_name)}: Cleaning up the container...")
     if not container.cleanup():
