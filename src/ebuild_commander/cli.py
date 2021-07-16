@@ -31,14 +31,14 @@ def parse_args(args, exit_on_error: bool = True) -> argparse.Namespace:
         description="""
 Run the SCRIPTs in a Docker container derived from a Gentoo stage3 image.
 With no SCRIPT, or when SCRIPT is -, read standard input.\
-        """,
+""",
         epilog="""
 exit status:
   0 if OK,
   1 if minor problems (e.g. cannot access any SCRIPT),
   2 if unrecognized arguments,
   3 if serious trouble (e.g. cannot run a Docker command).\
-        """,
+""",
         formatter_class=argparse.RawTextHelpFormatter,
         add_help=False,
         exit_on_error=exit_on_error
