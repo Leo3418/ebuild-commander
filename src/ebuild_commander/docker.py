@@ -58,7 +58,7 @@ class Commandocker:
         self._custom_repo_names = self._get_repo_names()
         # Use a canonical container name for this instance to avoid the
         # container from being created twice
-        self._container_name = f'ebuild-cmder-{time.strftime("%Y%m%d-%H%m%S")}'
+        self._container_name = f'ebuild-cmder-{time.strftime("%Y%m%d-%H%M%S")}'
 
     def start(self) -> bool:
         """
