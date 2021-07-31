@@ -56,7 +56,8 @@ def main(program_name: str, args) -> None:
 
     exit_status = 0
     try:
-        print(f"{info(program_name)}: Creating Docker container...")
+        print(f"{info(program_name)}: Creating Docker container...",
+              file=sys.stderr)
         if not container.start():
             exit_status = 3
         else:
@@ -64,12 +65,13 @@ def main(program_name: str, args) -> None:
                 if script.name == '-':
                     in_stream = sys.stdin
                     print(f"{info(program_name)}: "
-                          f"Reading commands to run from standard input...")
+                          f"Reading commands to run from standard input...",
+                          file=sys.stderr)
                 else:
                     try:
                         in_stream = open(script)
                         print(f"{info(program_name)}: "
-                              f"Running script {script}...")
+                              f"Running script {script}...", file=sys.stderr)
                     except OSError as err:
                         print(f"{error(program_name)}: {err.filename}:"
                               f"{err.strerror}", file=sys.stderr)
@@ -79,14 +81,15 @@ def main(program_name: str, args) -> None:
                     if not container.execute(line):
                         exit_status = 1
     except KeyboardInterrupt:
-        print(f"{error(program_name)}: Exiting on SIGINT")
+        print(f"{error(program_name)}: Exiting on SIGINT", file=sys.stderr)
         exit_status = _EXIT_SIGINT
 
     should_cleanup = opts.skip_cleanup == 'never' or \
         (opts.skip_cleanup == 'on-fail' and
             (exit_status == 0 or exit_status == _EXIT_SIGINT))
     if should_cleanup:
-        print(f"{info(program_name)}: Cleaning up the container...")
+        print(f"{info(program_name)}: Cleaning up the container...",
+              file=sys.stderr)
         if not container.cleanup():
             exit_status = 3
 

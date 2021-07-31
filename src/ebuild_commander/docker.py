@@ -131,7 +131,7 @@ class Commandocker:
             return True
         except subprocess.CalledProcessError as err:
             print(f"{error(self._program_name)}: Command {err.cmd} failed "
-                  f"with exit status {err.returncode}")
+                  f"with exit status {err.returncode}", file=sys.stderr)
             return False
 
     def _get_repo_names(self) -> list:
@@ -154,7 +154,7 @@ class Commandocker:
             return True
         except subprocess.CalledProcessError as err:
             print(f"{warn(self._program_name)}: Command {err.cmd} failed with "
-                  f"exit status {err.returncode}")
+                  f"exit status {err.returncode}", file=sys.stderr)
             return False
 
     def _create_container(self) -> bool:
@@ -205,7 +205,7 @@ class Commandocker:
             return True
         except subprocess.CalledProcessError as err:
             print(f"{error(self._program_name)}: Command {err.cmd} failed "
-                  f"with exit status {err.returncode}")
+                  f"with exit status {err.returncode}", file=sys.stderr)
             return False
 
     def _start_container(self) -> bool:
@@ -216,7 +216,7 @@ class Commandocker:
             return True
         except subprocess.CalledProcessError as err:
             print(f"{error(self._program_name)}: Command {err.cmd} failed "
-                  f"with exit status {err.returncode}")
+                  f"with exit status {err.returncode}", file=sys.stderr)
             return False
 
     def _config_portage(self) -> None:
