@@ -91,8 +91,7 @@ class Commandocker:
         """
         Run a command in the Docker container.  The container must be running.
         The container's standard output and standard error will be redirected
-        to this program's standard output and standard error respectively, but
-        standard output can be optionally suppressed.
+        to this program's standard output and standard error respectively.
 
         :param cmd: the command to be run
         :param fatal_on_failure: whether a failure to run the command indicates
@@ -112,7 +111,7 @@ class Commandocker:
             else:
                 program_name = warn(self._program_name)
             print(f"{program_name}: Exit status {err.returncode} encountered "
-                  f"for execution of the following command in the Docker "
+                  f"during execution of the following command in the Docker "
                   f"container {self._container_name}: \n"
                   f"\t{cmd}",
                   file=sys.stderr)
