@@ -168,7 +168,6 @@ class Commandocker:
             '--cap-add', 'SYS_PTRACE',
             # https://github.com/moby/moby/issues/16429
             '--security-opt', 'apparmor:unconfined',
-            '--device', '/dev/fuse',
             '--workdir', '/root',
             # Docker needs all paths on the host machine to be absolute ones
             '--volume', f'{self._gentoo_repo.resolve()}:'
