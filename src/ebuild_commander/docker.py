@@ -165,7 +165,7 @@ class Commandocker:
             '--cap-add', 'CAP_SYS_ADMIN',
             '--cap-add', 'CAP_MKNOD',
             '--cap-add', 'CAP_NET_ADMIN',
-            '--cap-add', 'SYS_PTRACE',
+            '--cap-add', 'CAP_SYS_PTRACE',
             # https://github.com/moby/moby/issues/16429
             '--security-opt', 'apparmor:unconfined',
             '--workdir', '/root',
