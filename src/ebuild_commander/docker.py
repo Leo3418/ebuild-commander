@@ -33,27 +33,31 @@ _CONTAINER_PORTAGE_CONFIGS_PATH = '/var/tmp/portage-configs'
 
 
 class Commandocker:
-    def __init__(self,
-                 program_name: str,
-                 portage_configs: list[pathlib.Path],
-                 profile: str,
-                 gentoo_repo: pathlib.Path,
-                 custom_repos: list[pathlib.Path],
-                 num_threads: int,
-                 emerge_opts: str,
-                 docker_image: str,
-                 should_pull_image: bool,
-                 storage_opt: str):
+    def __init__(
+            self,
+            program_name: str,
+            portage_configs: list[pathlib.Path],
+            profile: str,
+            gentoo_repo: pathlib.Path,
+            custom_repos: list[pathlib.Path],
+            num_threads: int,
+            emerge_opts: str,
+            docker_image: str,
+            should_pull_image: bool,
+            storage_opt: str,
+            docker_cmd: str
+    ):
         self._program_name = program_name
         self._portage_configs = portage_configs
         self._profile = profile
         self._gentoo_repo = gentoo_repo
         self._custom_repos = custom_repos
         self._emerge_opts = emerge_opts
-        self._docker_image = docker_image
         self._num_threads = num_threads
+        self._docker_image = docker_image
         self._should_pull_image = should_pull_image
         self._storage_opt = storage_opt
+        self._docker_cmd = docker_cmd
 
         self._custom_repo_names = self._get_repo_names()
         # Use a canonical container name for this instance to avoid the
@@ -100,8 +104,8 @@ class Commandocker:
         :return: whether or not the Docker process exited with a successful
             status
         """
-        args = ['docker', 'exec', '--interactive', self._container_name,
-                '/bin/bash', '-c', cmd]
+        args = [self._docker_cmd, 'exec', '--interactive',
+                self._container_name, '/bin/bash', '-c', cmd]
         try:
             subprocess.run(args, check=True, stdin=subprocess.DEVNULL)
             return True
@@ -125,7 +129,8 @@ class Commandocker:
         :return: whether or not the Docker container is successfully removed
         """
         try:
-            subprocess.run(['docker', 'rm', '-f', self._container_name],
+            subprocess.run([self._docker_cmd, 'rm', '-f',
+                            self._container_name],
                            stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
             return True
         except subprocess.CalledProcessError as err:
@@ -148,8 +153,8 @@ class Commandocker:
 
     def _pull_image(self) -> bool:
         try:
-            subprocess.run(['docker', 'pull', self._docker_image], check=True,
-                           stdin=subprocess.DEVNULL)
+            subprocess.run([self._docker_cmd, 'pull', self._docker_image],
+                           check=True, stdin=subprocess.DEVNULL)
             return True
         except subprocess.CalledProcessError as err:
             print(f"{warn(self._program_name)}: Command {err.cmd} failed with "
@@ -158,15 +163,18 @@ class Commandocker:
 
     def _create_container(self) -> bool:
         docker_args = [
-            'docker', 'create',
+            self._docker_cmd, 'create',
             '--name', self._container_name,
             '--tty',
-            '--cap-add', 'CAP_SYS_ADMIN',
             '--cap-add', 'CAP_MKNOD',
             '--cap-add', 'CAP_NET_ADMIN',
+            '--cap-add', 'CAP_SYS_ADMIN',
             '--cap-add', 'CAP_SYS_PTRACE',
+            # Needed on host systems with SELinux enabled
+            '--security-opt', 'label=disable',
             # https://github.com/moby/moby/issues/16429
-            '--security-opt', 'apparmor:unconfined',
+            # Use equal sign instead of colon for compatibility with Podman
+            '--security-opt', 'apparmor=unconfined',
             '--workdir', '/root',
             # Docker needs all paths on the host machine to be absolute ones
             '--volume', f'{self._gentoo_repo.resolve()}:'
@@ -208,7 +216,7 @@ class Commandocker:
 
     def _start_container(self) -> bool:
         try:
-            subprocess.run(['docker', 'start', self._container_name],
+            subprocess.run([self._docker_cmd, 'start', self._container_name],
                            check=True,
                            stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
             return True
@@ -240,7 +248,7 @@ class Commandocker:
 
     def _set_makeopts_num_jobs(self) -> bool:
         proc = subprocess.run(
-            ['docker', 'exec', '--interactive',
+            [self._docker_cmd, 'exec', '--interactive',
              self._container_name, '/bin/bash', '-c',
              f'grep --color=never MAKEOPTS= /etc/portage/make.conf'],
             stdin=subprocess.DEVNULL, capture_output=True
