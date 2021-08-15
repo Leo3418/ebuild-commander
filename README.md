@@ -2,9 +2,10 @@
 
 ebuild-commander is a tool designed for installation tests of
 [ebuilds][gentoo-wiki-ebuild] on Gentoo.  Inspired by
-[ebuildtester][ebuildtester], ebuild-commander tests ebuilds in a Docker
-container derived from [Gentoo stage3 images][docker-gentoo-stage3] but allows
-for finer granularity of control over the tests:
+[ebuildtester][ebuildtester], ebuild-commander tests ebuilds in a
+[Docker][docker] container derived from [Gentoo stage3
+images][docker-gentoo-stage3] but allows for finer granularity of control over
+the tests:
 
 - Instead of taking merely a single [package atom][gentoo-wiki-ver-spec],
   ebuild-commander accepts a list of shell commands that need to be executed
@@ -19,10 +20,17 @@ for finer granularity of control over the tests:
   test.  `package.accept_keywords`, `package.env`, `env` and `package.use` can
   all be fully customized with this method.
 
+- ebuild-commander supports any alternative container engine whose command-line
+  interface is compatible with Docker (e.g. [Podman][podman]).  Alternative
+  container engines may have advantages over Docker, like the ability to use
+  containers with a non-root user account.
+
 [gentoo-wiki-ebuild]: https://wiki.gentoo.org/wiki/Ebuild
 [ebuildtester]: https://github.com/nicolasbock/ebuildtester
+[docker]: https://docs.docker.com/get-started/overview/
 [docker-gentoo-stage3]: https://hub.docker.com/r/gentoo/stage3
 [gentoo-wiki-ver-spec]: https://wiki.gentoo.org/wiki/Version_specifier
+[podman]: http://docs.podman.io/en/latest/
 
 ## Usage
 
@@ -41,7 +49,15 @@ Note: ebuild-commander may invoke Docker commands like `docker create`, `docker
 start` and `docker exec` directly, so any user account used to run the
 `ebuild-cmder` command should have the permission to run those Docker commands.
 By default, those Docker commands can only be executed using `root`, so
-`ebuild-cmder` should also be run with `root`.
+`ebuild-cmder` should also be started with `root`.  However, under any of these
+circumstances, `ebuild-cmder` can be run with a non-root user account:
+
+- The non-root account is in the `docker` group.
+- The Docker daemon is running in the rootless mode.
+- An alternative container engine that does not require `root` privileges, like
+  Podman, is used (see a section down below for more details).
+- A command-line option which causes ebuild-commander to not interact with
+  Docker, like `--help` and `--version`, is set.
 
 ### Using Multiple `emerge` Commands
 
@@ -90,6 +106,22 @@ can be controlled with the `--profile` option of `ebuild-cmder`.  `repos.conf`
 is automatically populated by ebuild-commander according to the settings for
 the `--gentoo-repo` and `--custom-repo` options.
 
+### Using an Alternative Container Engine
+
+ebuild-commander uses Docker as the default container engine and thus calls the
+`docker` executable for container operations.  However, any container engine
+which provides a command-line interface that is equivalent to Docker's can be
+used with ebuild-commander.
+
+To specify an alternative container engine, please set the value of environment
+variable `EBUILD_CMDER_DOCKER` to the name of the container engine's main
+executable.  For example, the following command runs ebuild-commander with
+Podman, whose executable is called `podman`:
+
+```console
+$ env EBUILD_CMDER_DOCKER="podman" ebuild-cmder
+```
+
 ### More Information
 
 For a comprehensive list of command-line arguments recognized by
@@ -98,7 +130,11 @@ ebuild-commander, please refer to the output of command `ebuild-cmder --help`.
 ## Dependencies
 
 - Python 3.9 or above
-- Docker
+- Any container engine whose command-line interface is compatible with Docker,
+  including but not limited to:
+  - Docker
+  - Podman (requires environment variable setting
+    `EBUILD_CMDER_DOCKER="podman"`)
 
 ## Installation
 
