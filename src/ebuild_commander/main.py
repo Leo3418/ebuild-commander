@@ -18,7 +18,9 @@
 #  along with ebuild-commander.  If not, see
 #  <https://www.gnu.org/licenses/>.
 
+import os
 import pathlib
+import shutil
 import sys
 
 import ebuild_commander.cli
@@ -30,6 +32,12 @@ _EXIT_SIGINT = 130
 
 
 def main(program_name: str, args) -> None:
+    docker_cmd = os.getenv('EBUILD_CMDER_DOCKER', 'docker')
+    if shutil.which(docker_cmd) is None:
+        print(f"{error(program_name)}: Executable for Docker functionalities "
+              f"'{docker_cmd}' not found", file=sys.stderr)
+        sys.exit(3)
+
     opts = ebuild_commander.cli.parse_args(args)
 
     scripts = opts.scripts[0]
@@ -52,7 +60,9 @@ def main(program_name: str, args) -> None:
         opts.emerge_opts,
         opts.docker_image,
         opts.pull,
-        opts.storage_opt)
+        opts.storage_opt,
+        docker_cmd
+    )
 
     exit_status = 0
     try:

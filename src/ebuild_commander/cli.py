@@ -33,6 +33,10 @@ Run the SCRIPTs in a Docker container derived from a Gentoo stage3 image.
 With no SCRIPT, or when SCRIPT is -, read standard input.\
 """,
         epilog="""
+The EBUILD_CMDER_DOCKER environment variable can be set to the name of an
+alternative executable providing Docker functionalities, like 'podman'.
+If this environment variable is unset, then 'docker' will be used.
+
 exit status:
   0 if OK,
   1 if minor problems (e.g. cannot access any SCRIPT),
