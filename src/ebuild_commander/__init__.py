@@ -18,4 +18,4 @@
 #  along with ebuild-commander.  If not, see
 #  <https://www.gnu.org/licenses/>.
 
-__version__ = '0.0.1'
+__version__ = '0.1.0'
