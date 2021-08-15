@@ -53,11 +53,13 @@ By default, those Docker commands can only be executed using `root`, so
 circumstances, `ebuild-cmder` can be run with a non-root user account:
 
 - The non-root account is in the `docker` group.
-- The Docker daemon is running in the rootless mode.
+- The Docker daemon is running in the [rootless mode][docker-rootless].
 - An alternative container engine that does not require `root` privileges, like
   Podman, is used (see a section down below for more details).
 - A command-line option which causes ebuild-commander to not interact with
   Docker, like `--help` and `--version`, is set.
+
+[docker-rootless]: https://docs.docker.com/engine/security/rootless/
 
 ### Using Multiple `emerge` Commands
 
@@ -109,9 +111,9 @@ the `--gentoo-repo` and `--custom-repo` options.
 ### Using an Alternative Container Engine
 
 ebuild-commander uses Docker as the default container engine and thus calls the
-`docker` executable for container operations.  However, any container engine
-which provides a command-line interface that is equivalent to Docker's can be
-used with ebuild-commander.
+`docker` executable for container operations and other Docker functionalities.
+However, any container engine which provides a command-line interface that is
+equivalent to Docker's can be used with ebuild-commander.
 
 To specify an alternative container engine, please set the value of environment
 variable `EBUILD_CMDER_DOCKER` to the name of the container engine's main
@@ -138,8 +140,8 @@ ebuild-commander, please refer to the output of command `ebuild-cmder --help`.
 
 ## Installation
 
-The ebuild-commander project employs distutils as the build automation tool and
-has a `setup.py` script for building and installing this project, just like
+The ebuild-commander project employs setuptools as the build automation tool
+and has a `setup.py` script for building and installing this project, just like
 many other Python projects.
 
 All of the following commands assume that the working directory is the root of
@@ -151,12 +153,14 @@ ebuild-commander's source tree.
   install --user`.
 
 - To install ebuild-commander to the system globally so every user can use it,
-  please run `./setup.py install` with *superuser privilege* (which usually can
-  be done by prepending `sudo` to the command).
+  please run `./setup.py install` as `root`.
 
 - For more information about using `setup.py`, please run `./setup.py --help`.
 
 ## Testing
 
-The ebuild-commander project uses tox as the test runner.  To launch tests,
-please run command `tox` from any directory under this project's source tree.
+The ebuild-commander project uses [tox][tox] as the test runner.  To launch
+tests, please run command `tox` from any directory under this project's source
+tree.
+
+[tox]: https://tox.readthedocs.io/en/latest/
