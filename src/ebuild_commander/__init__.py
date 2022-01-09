@@ -18,4 +18,13 @@
 #  along with ebuild-commander.  If not, see
 #  <https://www.gnu.org/licenses/>.
 
+# The program's version -- please change this when releasing a new version
 __version__ = '0.1.0'
+
+# The name of the environment variable that specifies the executable providing
+# Docker functionalities this program should use
+__env_var_docker__ = 'EBUILD_CMDER_DOCKER'
+
+# The default value for the environment variable corresponding to
+# __env_var_docker
+__env_default_docker__ = 'docker'

@@ -24,6 +24,7 @@ import shutil
 import sys
 import time
 
+import ebuild_commander
 import ebuild_commander.cli
 
 from ebuild_commander.docker import Commandocker
@@ -33,7 +34,8 @@ _EXIT_SIGINT = 130
 
 
 def main(program_name: str, args) -> None:
-    docker_cmd = os.getenv('EBUILD_CMDER_DOCKER', 'docker')
+    docker_cmd = os.getenv(ebuild_commander.__env_var_docker__,
+                           ebuild_commander.__env_default_docker__)
     if shutil.which(docker_cmd) is None:
         print(f"{error(program_name)}: Executable for Docker functionalities "
               f"'{docker_cmd}' not found", file=sys.stderr)

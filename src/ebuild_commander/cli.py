@@ -26,16 +26,18 @@ import ebuild_commander
 
 
 def parse_args(args, exit_on_error: bool = True) -> argparse.Namespace:
+    env_var_docker = ebuild_commander.__env_var_docker__
+    default_docker = ebuild_commander.__env_default_docker__
     parser = argparse.ArgumentParser(
         usage="%(prog)s [OPTION]... [SCRIPT]...",
         description="""
 Run the SCRIPTs in a Docker container derived from a Gentoo stage3 image.
 With no SCRIPT, or when SCRIPT is -, read standard input.\
 """,
-        epilog="""
-The EBUILD_CMDER_DOCKER environment variable can be set to the name of an
+        epilog=f"""
+The {env_var_docker} environment variable can be set to the name of an
 alternative executable providing Docker functionalities, like 'podman'.
-If this environment variable is unset, then 'docker' will be used.
+If this environment variable is unset, then '{default_docker}' will be used.
 
 exit status:
   0 if OK,
