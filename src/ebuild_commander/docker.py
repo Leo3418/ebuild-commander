@@ -266,7 +266,7 @@ class Commandocker:
                      fatal_on_failure=False)
 
     def _set_emerge_opts(self) -> None:
-        self.execute(f'echo \'#!/usr/bin/env bash\n'
-                     f'/usr/bin/emerge {self._emerge_opts} "$@"\''
-                     f' > /usr/local/bin/emerge', fatal_on_failure=False)
-        self.execute('chmod +x /usr/local/bin/emerge', fatal_on_failure=False)
+        self.execute('echo \'EMERGE_DEFAULT_OPTS="${EMERGE_DEFAULT_OPTS} '
+                     f'{self._emerge_opts}"\' '
+                     '>> /etc/portage/make.conf',
+                     fatal_on_failure=False)
