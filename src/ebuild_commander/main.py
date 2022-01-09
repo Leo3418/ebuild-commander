@@ -22,6 +22,7 @@ import os
 import pathlib
 import shutil
 import sys
+import time
 
 import ebuild_commander.cli
 
@@ -50,8 +51,12 @@ def main(program_name: str, args) -> None:
     if custom_repos is None:
         custom_repos = []
 
+    # Use a canonical container name for this instance to avoid the
+    # container from being created twice
+    container_name = f'{program_name}-{time.strftime("%Y%m%d-%H%M%S")}'
     container = Commandocker(
         program_name,
+        container_name,
         portage_configs,
         opts.profile,
         opts.gentoo_repo,

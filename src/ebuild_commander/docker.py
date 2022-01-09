@@ -23,7 +23,6 @@ import os
 import pathlib
 import subprocess
 import sys
-import time
 
 from ebuild_commander.out_fmt import warn, error
 
@@ -34,6 +33,7 @@ class Commandocker:
     def __init__(
             self,
             program_name: str,
+            container_name: str,
             portage_configs: list[pathlib.Path],
             profile: str,
             gentoo_repo: pathlib.Path,
@@ -46,6 +46,7 @@ class Commandocker:
             docker_cmd: str
     ):
         self._program_name = program_name
+        self._container_name = container_name
         self._portage_configs = portage_configs
         self._profile = profile
         self._gentoo_repo = gentoo_repo
@@ -58,9 +59,6 @@ class Commandocker:
         self._docker_cmd = docker_cmd
 
         self._custom_repo_names = self._get_repo_names()
-        # Use a canonical container name for this instance to avoid the
-        # container from being created twice
-        self._container_name = f'ebuild-cmder-{time.strftime("%Y%m%d-%H%M%S")}'
 
     def start(self) -> bool:
         """
