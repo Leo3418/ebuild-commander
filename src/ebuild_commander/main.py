@@ -107,5 +107,9 @@ def main(program_name: str, args) -> None:
               file=sys.stderr)
         if not container.cleanup():
             exit_status = 3
+    else:
+        print(f"{info(program_name)}: "
+              f"Skipping clean-up of container {container_name}",
+              file=sys.stderr)
 
     sys.exit(exit_status)
