@@ -25,8 +25,6 @@ import subprocess
 import sys
 import time
 
-import ebuild_commander.utils
-
 from ebuild_commander.out_fmt import warn, error
 
 _CONTAINER_PORTAGE_CONFIGS_PATH = '/var/tmp/portage-configs'
@@ -247,26 +245,10 @@ class Commandocker:
                      fatal_on_failure=False)
 
     def _set_makeopts_num_jobs(self) -> bool:
-        proc = subprocess.run(
-            [self._docker_cmd, 'exec', '--interactive',
-             self._container_name, '/bin/bash', '-c',
-             f'grep --color=never MAKEOPTS= /etc/portage/make.conf'],
-            stdin=subprocess.DEVNULL, capture_output=True
-        )
-        # grep exits with 1 if there were no matches but no errors occurred
-        if proc.returncode != 0 and proc.returncode != 1:
-            return False
-        orig_makeopts = proc.stdout.decode()
-        new_makeopts = ebuild_commander.utils.set_makeopts_num_jobs(
-            orig_makeopts, self._num_threads)
-        # Appending new MAKEOPTS to make.conf works because when an option is
-        # defined more than once, the last definition takes effect
-        if new_makeopts.endswith("'"):
-            return self.execute(
-                f'echo "{new_makeopts}" >> /etc/portage/make.conf')
-        else:
-            return self.execute(
-                f"echo '{new_makeopts}' >> /etc/portage/make.conf")
+        return self.execute('echo \'MAKEOPTS="${MAKEOPTS} '
+                            f'-j{self._num_threads}"\' '
+                            '>> /etc/portage/make.conf',
+                            fatal_on_failure=False)
 
     def _enable_custom_repos(self) -> None:
         self.execute('mkdir /etc/portage/repos.conf', fatal_on_failure=False)
