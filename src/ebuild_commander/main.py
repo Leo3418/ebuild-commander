@@ -34,11 +34,15 @@ _EXIT_SIGINT = 130
 
 
 def main(program_name: str, args) -> None:
-    docker_cmd = os.getenv(ebuild_commander.__env_var_docker__,
-                           ebuild_commander.__env_default_docker__)
+    docker_cmd_var = ebuild_commander.__env_var_docker__
+    docker_cmd_default = ebuild_commander.__env_default_docker__
+    docker_cmd = os.getenv(docker_cmd_var, docker_cmd_default)
     if shutil.which(docker_cmd) is None:
         print(f"{error(program_name)}: Executable for Docker functionalities "
               f"'{docker_cmd}' not found", file=sys.stderr)
+        if docker_cmd == docker_cmd_default:
+            print(f"{error(program_name)}: Use environment variable "
+                  f"{docker_cmd_var} to specify an alternative executable")
         sys.exit(3)
 
     opts = ebuild_commander.cli.parse_args(args)
