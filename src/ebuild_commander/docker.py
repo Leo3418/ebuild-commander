@@ -225,13 +225,11 @@ class Commandocker:
 
     def _config_portage(self) -> None:
         self._copy_portage_config()
-        if not self._set_makeopts_num_jobs():
-            print(f"{warn(self._program_name)}: Failed to set MAKEOPTS; "
-                  f"the original value for this variable will be used",
-                  file=sys.stderr)
+        self._add_comment_to_make_conf()
+        self._set_makeopts_num_jobs()
+        self._set_emerge_opts()
         self._enable_custom_repos()
         self._set_profile()
-        self._set_emerge_opts()
 
     def _copy_portage_config(self) -> None:
         self.execute(f'rm -rf /etc/portage/*',
@@ -244,11 +242,22 @@ class Commandocker:
         self.execute(f'rm -rf /etc/portage/repos.conf',
                      fatal_on_failure=False)
 
-    def _set_makeopts_num_jobs(self) -> bool:
-        return self.execute('echo \'MAKEOPTS="${MAKEOPTS} '
-                            f'-j{self._num_threads}"\' '
-                            '>> /etc/portage/make.conf',
-                            fatal_on_failure=False)
+    def _add_comment_to_make_conf(self) -> None:
+        self.execute('echo -e "\\n# Settings added by ebuild-commander" '
+                     '>> /etc/portage/make.conf',
+                     fatal_on_failure=False)
+
+    def _set_makeopts_num_jobs(self) -> None:
+        self.execute('echo \'MAKEOPTS="${MAKEOPTS} '
+                     f'-j{self._num_threads}"\' '
+                     '>> /etc/portage/make.conf',
+                     fatal_on_failure=False)
+
+    def _set_emerge_opts(self) -> None:
+        self.execute('echo \'EMERGE_DEFAULT_OPTS="${EMERGE_DEFAULT_OPTS} '
+                     f'{self._emerge_opts}"\' '
+                     '>> /etc/portage/make.conf',
+                     fatal_on_failure=False)
 
     def _enable_custom_repos(self) -> None:
         self.execute('mkdir /etc/portage/repos.conf', fatal_on_failure=False)
@@ -263,10 +272,4 @@ class Commandocker:
 
     def _set_profile(self) -> None:
         self.execute(f'eselect profile set {self._profile}',
-                     fatal_on_failure=False)
-
-    def _set_emerge_opts(self) -> None:
-        self.execute('echo \'EMERGE_DEFAULT_OPTS="${EMERGE_DEFAULT_OPTS} '
-                     f'{self._emerge_opts}"\' '
-                     '>> /etc/portage/make.conf',
                      fatal_on_failure=False)
