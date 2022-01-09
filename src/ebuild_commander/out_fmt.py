@@ -1,6 +1,6 @@
 #  ebuild-commander Output Formatting Utilities
 #
-#  Copyright (C) 2021 Yuan Liao
+#  Copyright (C) 2021-2022 Yuan Liao
 #
 #  This file is part of ebuild-commander.
 #

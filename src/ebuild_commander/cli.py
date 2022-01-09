@@ -1,6 +1,6 @@
 #  ebuild-commander Command-line Interface Module
 #
-#  Copyright (C) 2021 Yuan Liao
+#  Copyright (C) 2021-2022 Yuan Liao
 #
 #  This file is part of ebuild-commander.
 #
@@ -151,7 +151,7 @@ exit status:
 def get_version_message() -> str:
     return f"""
 ebuild-commander {ebuild_commander.__version__}
-Copyright (C) 2021 Yuan Liao
+Copyright (C) 2021-2022 Yuan Liao
 License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.\
