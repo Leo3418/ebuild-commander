@@ -140,22 +140,29 @@ ebuild-commander, please refer to the output of command `ebuild-cmder --help`.
 
 ## Installation
 
-The ebuild-commander project employs setuptools as the build automation tool
-and has a `setup.py` script for building and installing this project, just like
-many other Python projects.
+ebuild-commander can be installed with [pip][pip], a commonly-used Python
+package installer.
 
 All of the following commands assume that the working directory is the root of
-ebuild-commander's source tree.
+the ebuild-commander project's source tree.
 
-- To build this project, please run `./setup.py build`.
-
-- To install ebuild-commander only for the current user, please run `./setup.py
-  install --user`.
+- To install ebuild-commander only for the current user, please run `pip
+  install --user .`.
 
 - To install ebuild-commander to the system globally so every user can use it,
-  please run `./setup.py install` as `root`.
+  please run `pip install .` as `root`.
 
-- For more information about using `setup.py`, please run `./setup.py --help`.
+To uninstall ebuild-commander, please run `pip uninstall ebuild-commander`.
+This command can be run anywhere: there is not a working directory requirement
+for it.  Note that:
+
+- The `--user` option should not be used, even if ebuild-commander is installed
+  for the current user only.
+
+- If ebuild-commander is installed to the system globally, this command needs
+  to be run as `root` too.
+
+[pip]: https://pip.pypa.io/en/stable/
 
 ## Testing
 
