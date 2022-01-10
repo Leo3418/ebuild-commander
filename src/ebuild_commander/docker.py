@@ -80,9 +80,7 @@ class Commandocker:
                       f"copy of image {self._docker_image} -- will exit with "
                       f"failure if the image is not available locally",
                       file=sys.stderr)
-        if not self._create_container():
-            return False
-        if not self._start_container():
+        if not self._run_container():
             return False
         self._config_portage()
         return True
@@ -157,9 +155,9 @@ class Commandocker:
                   f"exit status {err.returncode}", file=sys.stderr)
             return False
 
-    def _create_container(self) -> bool:
+    def _run_container(self) -> bool:
         docker_args = [
-            self._docker_cmd, 'create',
+            self._docker_cmd, 'run', '-d',
             '--name', self._container_name,
             '--tty',
             '--cap-add', 'CAP_MKNOD',
@@ -174,7 +172,8 @@ class Commandocker:
             '--workdir', '/root',
             # Docker needs all paths on the host machine to be absolute ones
             '--volume', f'{self._gentoo_repo.resolve()}:'
-                        f'/var/db/repos/gentoo:ro']
+                        f'/var/db/repos/gentoo:ro'
+        ]
 
         # Bind each config directory to a path whose base name is the
         # directory's index in the array; pad each index with enough digits to
@@ -203,17 +202,6 @@ class Commandocker:
         docker_args.append(self._docker_image)
         try:
             subprocess.run(docker_args, check=True,
-                           stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
-            return True
-        except subprocess.CalledProcessError as err:
-            print(f"{error(self._program_name)}: Command {err.cmd} failed "
-                  f"with exit status {err.returncode}", file=sys.stderr)
-            return False
-
-    def _start_container(self) -> bool:
-        try:
-            subprocess.run([self._docker_cmd, 'start', self._container_name],
-                           check=True,
                            stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
             return True
         except subprocess.CalledProcessError as err:
