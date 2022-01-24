@@ -34,6 +34,8 @@ _EXIT_SIGINT = 130
 
 
 def main(program_name: str, args) -> None:
+    opts = ebuild_commander.cli.parse_args(args)
+
     docker_cmd_var = ebuild_commander.__env_var_docker__
     docker_cmd_default = ebuild_commander.__env_default_docker__
     docker_cmd = os.getenv(docker_cmd_var, docker_cmd_default)
@@ -44,8 +46,6 @@ def main(program_name: str, args) -> None:
             print(f"{error(program_name)}: Use environment variable "
                   f"{docker_cmd_var} to specify an alternative executable")
         sys.exit(3)
-
-    opts = ebuild_commander.cli.parse_args(args)
 
     scripts = opts.scripts[0]
     if len(scripts) == 0:
