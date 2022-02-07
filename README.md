@@ -45,12 +45,12 @@ example, this command can be used to install a single package
 # ebuild-cmder <<< "emerge sys-apps/portage"
 ```
 
-Note: ebuild-commander may invoke Docker commands like `docker create`, `docker
-start` and `docker exec` directly, so any user account used to run the
-`ebuild-cmder` command should have the permission to run those Docker commands.
-By default, those Docker commands can only be executed using `root`, so
-`ebuild-cmder` should also be started with `root`.  However, under any of these
-circumstances, `ebuild-cmder` can be run with a non-root user account:
+Note: ebuild-commander may invoke Docker commands like `docker run` and `docker
+exec` directly, so any user account used to run the `ebuild-cmder` command
+should have the permission to run those Docker commands.  By default, those
+Docker commands can only be executed using `root`, so `ebuild-cmder` should
+also be started with `root`.  However, under any of these circumstances,
+`ebuild-cmder` can be run with a non-root user account:
 
 - The non-root account is in the `docker` group.
 - The Docker daemon is running in the [rootless mode][docker-rootless].
@@ -140,6 +140,8 @@ ebuild-commander, please refer to the output of command `ebuild-cmder --help`.
 
 ## Installation
 
+### On Any System with Python
+
 ebuild-commander can be installed with [pip][pip], a commonly-used Python
 package installer.
 
@@ -163,6 +165,13 @@ for it.  Note that:
   to be run as `root` too.
 
 [pip]: https://pip.pypa.io/en/stable/
+
+### On Gentoo
+
+A Gentoo package, [`dev-util/ebuild-commander`][ebuilds], is available in this
+project's maintainer's personal ebuild repository.
+
+[ebuilds]: https://github.com/Leo3418/leo3418-ebuild-repo/tree/master/dev-util/ebuild-commander
 
 ## Testing
 
