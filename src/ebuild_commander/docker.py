@@ -157,7 +157,7 @@ class Commandocker:
 
     def _run_container(self) -> bool:
         docker_args = [
-            self._docker_cmd, 'run', '-d',
+            self._docker_cmd, 'run', '--detach',
             '--name', self._container_name,
             '--tty',
             '--cap-add', 'CAP_MKNOD',
