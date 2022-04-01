@@ -169,6 +169,10 @@ class Commandocker:
             # https://github.com/moby/moby/issues/16429
             # Use equal sign instead of colon for compatibility with Podman
             '--security-opt', 'apparmor=unconfined',
+            # Needed to build packages like x11-libs/gdk-pixbuf with
+            # glibc >=2.34 on GitHub Actions runners as of March 2022
+            # https://github.com/actions/virtual-environments/issues/3812
+            '--security-opt', 'seccomp=unconfined',
             '--workdir', '/root',
             # Docker needs all paths on the host machine to be absolute ones
             '--volume', f'{self._gentoo_repo.resolve()}:'
