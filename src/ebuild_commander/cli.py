@@ -142,7 +142,7 @@ exit status:
     parser.add_argument(
         '--version',
         action='version',
-        help='output version information and exit',
+        help="output version information and exit",
         version=get_version_message()
     )
 
