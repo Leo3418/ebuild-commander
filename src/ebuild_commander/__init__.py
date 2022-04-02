@@ -19,7 +19,7 @@
 #  <https://www.gnu.org/licenses/>.
 
 # The program's version -- please change this when releasing a new version
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 
 # The name of the environment variable that specifies the executable providing
 # Docker functionalities this program should use
